@@ -4,6 +4,7 @@
   "dependencies": {
     "fastify": "*",
     "@fastify/http-proxy": "*",
-    "node-fetch": "*"
+    "node-fetch": "*",
+    "@fastify/cors": "*",
   }
 }
