@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "name": "fastify-proxy-app",
+  "dependencies": {
+    "fastify": "^4.25.1",
+    "@fastify/http-proxy": "^7.3.0"
+  }
+}
