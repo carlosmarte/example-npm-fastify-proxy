@@ -1,31 +1,35 @@
 // pdf-proxy-server.mjs
 import Fastify from 'fastify';
-import fetch from 'node-fetch'; // For Node < 18
-import { pipeline } from 'stream';
-import { promisify } from 'util';
+import fetch from 'node-fetch'; // Use global fetch if Node 18+
+import fastifyCors from '@fastify/cors';
 
-const streamPipeline = promisify(pipeline);
 const app = Fastify({ logger: true });
 
-// Replace this with any public PDF URL
+// Register CORS to allow all origins
+await app.register(fastifyCors, {
+  origin: true, // Allow all origins
+  methods: ['GET'], // Limit to GET requests
+});
+
+// Remote PDF URL
 const remotePDFUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
 app.get('/download-pdf', async (req, reply) => {
   try {
     const response = await fetch(remotePDFUrl);
+
     if (!response.ok) {
       throw new Error(`Failed to fetch PDF: ${response.statusText}`);
     }
 
-    // Set response headers for browser download
-    reply.header('Content-Type', 'application/pdf');
-    reply.header('Content-Disposition', 'inline; filename="remote.pdf"');
+    reply
+      .header('Content-Type', 'application/pdf')
+      .header('Content-Disposition', 'inline; filename="remote.pdf"');
 
-    // Stream the PDF content to the client
     return reply.send(response.body);
   } catch (err) {
     req.log.error(err);
-    reply.status(500).send({ error: 'Failed to retrieve PDF' });
+    return reply.status(500).send({ error: 'Failed to retrieve PDF' });
   }
 });
 
