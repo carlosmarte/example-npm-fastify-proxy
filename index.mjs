@@ -12,6 +12,10 @@ await app.register(fastifyHttpProxy, {
   http2: false
 });
 
+app.get('/hello', async () => {
+  return { msg: 'Hello from upstream!' };
+});
+
 // Start server
 const start = async () => {
   try {
